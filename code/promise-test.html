@@ -1,0 +1,30 @@
+<html>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport"
+        content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Promise Test</title>
+</head>
+<body>
+
+</body>
+
+<script>
+  function Pro (fn) {
+    this.then = callback => this.cb = callback
+    this.resolve = data => this.cb(data)
+    fn(this.resolve)
+  }
+
+  new Pro((resolve, reject) => {
+    console.log('马上执行')
+    setTimeout(() => {
+      resolve("延时执行")
+    }, 1000)
+  }).then((res) => {
+    console.log(res)
+  })
+</script>
+
+</html>

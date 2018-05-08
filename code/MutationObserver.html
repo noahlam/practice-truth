@@ -1,0 +1,32 @@
+<html>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport"
+        content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Promise Test</title>
+</head>
+<body>
+<div id='target' class='block' name='target'>
+  target的第一个子节点
+  <p>
+    <span>target的后代</span>
+  </p>
+</div>
+</body>
+
+<script>
+  var target=document.getElementById('target');
+  var i=0
+  var observe=new MutationObserver(function (mutations,observe) {
+    i++
+    console.log("异步",i,"mutations",mutations,"observe",observe)
+  });
+  observe.observe(target,{ childList: true});
+  var div = document.createElement("div")
+  div.className = "aaaaaaa"
+  div.innerHTML = "子节点内容"
+  target.appendChild(div);
+</script>
+
+</html>

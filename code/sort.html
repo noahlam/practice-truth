@@ -1,0 +1,161 @@
+<html>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport"
+        content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>各种排序算法</title>
+</head>
+<body>
+
+</body>
+
+<script>
+
+  // http://www.cnblogs.com/eniac12/p/5329396.html
+  // var arr = [5, 3, 1, 4]
+  // var arr = [4,7,2,9,5,3,0,8,1,6]
+  //  var arr = [4, 435, 7, 2, 53, 68, 9, 50, 3, 0, 8, 1, 6, 5, 65, 29, 67, 60, 31]
+  var arr = [54, 76, 29, 23, 58, 43, 19, 13, 48, 34, 28, 38, 8, 64, 2, 95]
+
+  // 通用方法: 交换两个数据
+  Array.prototype.swap = function (idx1, idx2) {
+    let temp = this[idx1]
+    this[idx1] = this[idx2]
+    this[idx2] = temp
+  }
+
+  // 冒泡排序
+  // 2层循环数组，把数组里面所有的值都对比一遍。
+  // function bubble(arr) {
+  //   let len = arr.length
+  //   for (let i = 0; i < len; i++) {
+  //     for (let j = 0; j < len - 1 - i; j++) {
+  //       if (arr[j] > arr[j + 1]) {
+  //         arr.swap(j, j + 1)
+  //       }
+  //     }
+  //   }
+  // }
+  // bubble(arr)
+
+  // 鸡尾酒排序
+  // 同样是两层循环数组，不同的是，第二层循环每次可以确定一个最大值和一个最小值
+  // 这2个值下一轮循环的时候，无需参与比较，可以剔除掉，省点时间。
+  // function cocktail(arr) {
+  //   let left = 0, right = arr.length - 1
+  //   while (left < right) {
+  //     for (let i = left; i < right; i++) {
+  //       if (arr[i] > arr[i + 1]) arr.swap(i, i + 1)
+  //     }
+  //     right--
+  //     for (let i = right; i > left; i--) {
+  //       if (arr[i] < arr[i - 1]) arr.swap(i, i - 1)
+  //     }
+  //     left++
+  //   }
+  // }
+
+  // cocktail(arr)
+
+  // 选择排序
+  // 同样也是2层循环。
+  // 差别在第二层循环， 这里不一一做对比交换，一次循环只找到一个最小数
+  // 然后把找到的最小数，跟当前循环的第一个数交换。
+  // function selection(arr) {
+  //   let len = arr.length
+  //   for (let i = 0; i < len; i++) {
+  //     let min = i
+  //     for (let j = i; j < len; j++) {
+  //       if (arr[j] < arr[min]) min = j
+  //     }
+  //     arr.swap(i, min)
+  //   }
+  // }
+
+  // selection(arr)
+
+  // 循环数组，获取当前值。
+  // 然后拿当前值跟当前值之前的值对比，如果比较大，就往前挪，一直挪到没有比较大为止
+  // function insertion(arr) {
+  //   let len = arr.length -1
+  //   for (let i = 0; i< len; i++) {
+  //     let j = i
+  //     while (j >= 0 && arr[j] < arr[j - 1])
+  //       arr.swap(j, --j)
+  //   }
+  //   console.log('insertion sort')
+  // }
+  //
+  //   insertion(arr)
+
+
+  // 二分插入排序
+  function dichotomyInsertion(arr) {
+    let len = arr.length
+    for (let i = 0; i < len; i++) {
+      let left = 0, right = i
+      let cur = arr[i]
+      while (left <= right) {
+        let mid = parseInt((left + right) / 2)
+        if (cur > arr[mid]) {
+          left = mid + 1
+        } else {
+          right = mid - 1
+        }
+      }
+      arr.splice(i, 1)
+      arr.splice(left, 0, cur)
+    }
+  }
+
+  // dichotomyInsertion(arr)
+
+  function shellSort(arr) {
+    let gap = 1
+    let len = arr.length - 1
+    // 计算合适的区间
+    while (gap < len) gap = gap * 3 + 1
+    while(gap >= 0) {
+      for(let i = gap; i < len; i++) {
+        // 这里执行插入排序(与普通插入排序不同的是，这里的插入区间不是1，是 gap)
+        let cur = arr[i]
+        let idx = i - gap
+        while (arr[idx] > cur && idx >= 0) {
+          arr[idx + gap] = arr[idx]
+          idx -= gap
+        }
+        arr[idx + gap] = cur
+      }
+      gap = (gap - 1) / 3
+    }
+    console.log('shell sort')
+  }
+
+  shellSort(arr)
+
+
+  function quickPartition(arr, left, right) {
+    let cur = arr[right]
+    let idx = left - 1
+    for (let i = left; i < right; i++) {
+      if (arr[i] <= cur) arr.swap(i, ++idx)
+    }
+    arr.swap(++idx, right)
+    return idx
+  }
+
+  function quickSort(arr, left = 0, right = arr.length - 1) {
+    if (left >= right) return
+    let idx = quickPartition(arr, left, right)
+    quickSort(arr, left, idx - 1)
+    quickSort(arr, idx + 1, right)
+  }
+
+  // quickSort(arr)
+
+
+  console.log(arr)
+</script>
+
+</html>

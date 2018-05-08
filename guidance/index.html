@@ -1,0 +1,201 @@
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>引导动画的几种实现方式</title>
+  <style>
+    body {
+      margin:0;
+      padding: 0;
+    }
+    .main {
+      display: flex;
+    }
+    .left{
+      background: #ccc;
+      width: 40%;
+      height: 100%;
+    }
+    .middle {
+      width: 20%;
+      height: 100%;
+    }
+    .mid-top {
+      width: 100%;
+      height: 30%;
+      background: #a25b96;
+    }
+    .mid-center{
+      width: 100%;
+      height: 40%;
+      background: #7d0fa2;
+      box-sizing: border-box;
+      color: #fff;
+      padding: 10px;
+    }
+    .mid-bottom {
+      width: 100%;
+      height: 30%;
+      background: #a25b96;
+    }
+    .right {
+      background: #ccc;
+      width: 40%;
+      height: 100%;
+    }
+    .btn {
+      width: 100px;
+      height: 40px;
+      border-radius: 3px;
+      background: #409bcc;
+      margin: 10px;
+      padding:  0 10px;
+      line-height: 40px;
+      cursor: pointer;
+      color: #fff;
+      font-size: 12px;
+    }
+    .halfTransparent {
+      opacity: 0.15;
+    }
+    .darkBackGround {
+      background: #000;
+    }
+    .modal {
+      position: fixed;
+      top:0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      background: rgba(0, 0, 0, 0.85);
+      z-index:99;
+      display: none;
+    }
+  </style>
+  <script src="./html2canvas.min.js"></script>
+</head>
+<body>
+<div class="main">
+  <div class="left">左侧</div>
+  <div class="middle">
+    <div class="mid-top">上</div>
+    <div class="mid-center" onclick="hideGuidance2();hideGuidance4()">
+      这里假设所有的弹出层都是基于页面上原有的元素. <br >
+      点击我会关闭模态弹窗
+    </div>
+    <div class="mid-bottom">下</div>
+  </div>
+  <div class="right">右侧
+    <div class="btn" onclick="showGuidance1()">显示 第一种</div>
+    <div class="btn" onclick="showGuidance2()">显示 第二种</div>
+    <div class="btn" onclick="showGuidance3()">显示 第三种</div>
+    <div class="btn" onclick="showGuidance4()">显示 第四种</div>
+  </div>
+</div>
+<div class="modal"></div>
+<canvas id="canvas" class="modal" onclick="hideGuidance3()"></canvas>
+</body>
+<script>
+  let clone = null
+
+  function showGuidance1() {
+
+    let modal = document.querySelector('.modal')
+    let target = document.querySelector('.mid-center')
+    clone = target.cloneNode(true)
+    let pos = target.getBoundingClientRect()
+    // console.log(pos)
+    clone.style.position = 'fixed'
+    clone.style.left = pos.left
+    clone.style.top = pos.top
+    clone.style.width = pos.width
+    clone.style.height = pos.height
+    clone.style.zIndex = 100
+    clone.onclick = hideGuidance1
+
+    modal.style.display = 'block'
+    document.body.appendChild(clone)
+  }
+
+  function hideGuidance1() {
+    let modal = document.querySelector('.modal')
+    modal.style.display = 'none'
+    document.body.removeChild(clone)
+  }
+
+  function showGuidance2() {
+    let target = document.querySelector('.mid-center')
+    target.style.boxShadow = '0 0 0 4000px rgba(0, 0, 0, 0.85)'
+    target.style.position = 'relative'
+  }
+
+  function hideGuidance2() {
+    let target = document.querySelector('.mid-center')
+    target.style.boxShadow = null
+    target.style.position = 'static'
+  }
+
+  function showGuidance3() {
+	  let target = document.querySelector('.mid-center')
+	  let pos = target.getBoundingClientRect()
+	  let w = ~~pos.width
+	  let h = ~~pos.height
+
+	  let canvas = document.querySelector('#canvas')
+    canvas.width = document.documentElement.clientWidth
+    canvas.height = document.documentElement.clientHeight
+	  let ctx = canvas.getContext("2d");
+	  canvas.style.display = 'block'
+
+	  html2canvas(target, {
+      width: w,
+		  height: h,
+	  }).then( (cvs) => {
+		  ctx.drawImage(cvs, pos.left, pos.top)
+    })
+  }
+
+  function hideGuidance3() {
+	  let target = document.querySelector('#canvas')
+	  target.style.display = 'none'
+  }
+
+  function showGuidance4() {
+	  let main = document.querySelector('.main')
+    main.className += ' darkBackGround'
+	  setOpticity(main)
+  }
+  function hideGuidance4() {
+	  let main = document.querySelector('.main')
+	  main.className = main.className.replace(/ darkBackGround/i, '')
+	  unSetOpticity(main)
+  }
+
+  // 遍历 dom ,如果不是目标元素,或者不是目前元素的父级元素,则设置一个样式名
+  function setOpticity (element) {
+	  let doms = Array.from(element.children) || []
+    let hasMatched = false
+    for (let el of doms) {
+    	if (!el.className.match(/mid-center/i) && el.children.length) {
+		    hasMatched = setOpticity(el)
+        if (!hasMatched) el.className += ' halfTransparent'
+      } else if(el.className.match(/mid-center/i)) {
+		    hasMatched = true
+      } else {
+		    el.className += ' halfTransparent'
+      }
+    }
+    return hasMatched
+  }
+
+  // 遍历 dom 上一步添加的样式名
+  function unSetOpticity (element) {
+	  let doms = Array.from(element.children) || []
+	  for (let el of doms) {
+		  el.className = el.className.replace(/ halfTransparent/i, '')
+		  if (el.children.length) {
+			  unSetOpticity(el)
+      }
+	  }
+  }
+</script>
+</html>

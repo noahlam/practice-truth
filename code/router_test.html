@@ -15,7 +15,7 @@
   </style>
 </head>
 <body>
-<input type="button" onclick="historyPush('1.html','#f40009')" value="History跳转_1">
+<input type="button" onclick="historyPush('/1.html','#f40009')" value="History跳转_1">
 <input type="button" onclick="historyPush('2.html', '#0832c6')" value="History跳转2">
 <input type="button" onclick="historyPush('3.html','#aa4477')" value="History跳转3">
 <br /><br />
@@ -35,7 +35,7 @@
     let state = e.state || {}
     test.style.backgroundColor = state.color ||''
     test.innerHTML = state.url || ''
-    console.log('历史路由',state.url)
+    console.log('历史路由',e)
   })
 
 

@@ -34,8 +34,17 @@ const config = {
   devServer: {
     historyApiFallback: true,
     inline: true,
+    host: '0.0.0.0',
     port:8128,
-    contentBase: path.join(__dirname, "dist")
+    contentBase: path.join(__dirname, "dist"),
+    proxy: {
+      '/': {
+        target: 'https://login.weixin.qq.com/',
+        changeOrigin: true,
+        secure: false,
+        logLevel: 'debug'
+      },
+    }
   },
 
 }

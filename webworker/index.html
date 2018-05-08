@@ -1,0 +1,28 @@
+<html>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport"
+        content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>web worker</title>
+
+</head>
+<body>
+</body>
+<script>
+
+let worker = new Worker('./work.js')
+let timer = null
+worker.postMessage('我是被传递的消息')
+
+worker.addEventListener('message', function (e) {
+	clearInterval(timer)
+	console.log('控制台打印:', e.data)
+})
+
+timer = setInterval(() => {
+	console.log('主线程也再持续执行中...')
+}, 100)
+
+</script>
+</html>
