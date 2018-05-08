@@ -1,0 +1,138 @@
+<html>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport"
+        content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Vue 双向绑定</title>
+</head>
+<body>
+<div id="app">
+  <input type="text" v-model="num">
+  <input type="button" value="增加" v-click="add">
+  <input type="button" value="减去" v-click="sub">
+  <div v-bind="num"></div>
+</div>
+</body>
+
+<script>
+  // 主类
+  function Vue (options) {
+    this._init(options)
+  }
+
+  // 初始化
+  Vue.prototype._init = function (options) {
+    this.$options = options
+    this.$el = document.querySelector(options.el)
+    this.$data = options.data
+    this.$methods = options.methods
+
+    this._binding = {}
+    this._observe(this.$data)
+    this._compile(this.$el)
+  }
+
+  // data里面的数据监听
+  Vue.prototype._observe = function (data) {
+
+    Object.keys(data).forEach((key) => {
+      // 如果没有这个key,就退出
+      if(!data.hasOwnProperty(key)) return
+      var value = data[key]
+      // 如果值是一个对象,继续往下递归
+      if(typeof value === 'object') {
+        this._observe(value)
+      }
+      // 指令集要再这边初始化一下,不然compile绑定的时候,会报错
+      this._binding[key] = {_directives: []}
+      let bindKey = this._binding[key]
+      // 如果是普通的值
+      Object.defineProperty(data,key,{
+        enumerable:true,
+        configurable:true,
+        get(){
+          // console.log(`[get]: ${key}`)
+          return value
+        },
+        set(v){
+          // console.log(`[set] ${key} = ${v}`)
+          if(value !== v) value = v
+          // 遍历所绑定的指令集,分别执行对应的update方法,更新dom
+          bindKey._directives.map(item => {item.update()})
+        }
+      })
+    })
+  }
+
+  // html 指令解析
+  Vue.prototype._compile = function (root) {
+    const nodes = Array.prototype.slice.call(root.children)
+    nodes.map(node => {
+      // 如果有子节点,递归下去
+      if(node.children.length > 0) {
+        this._complie(node)
+      }
+
+      // 解析 v-bind 指令
+      if(node.hasAttribute('v-bind')) {
+        let key = node.getAttribute('v-bind')
+        // 实例化一个监听类
+        let watcher = new Watcher(node,'innerHTML',this.$data,key)
+        // 把监听类 加入到 指令集(数组)里面
+        // 这样做的目的是 检测到set赋值的时候,就调用指令集里面的监听类的更新方法
+        // 去更新有绑定的dom元素
+        this._binding[key]._directives.push(watcher)
+      }
+      // 解析 v-model 指令 原理同上
+      if(node.hasAttribute('v-model')) {
+        let key = node.getAttribute('v-model')
+        let data = this.$data
+        // 加入一个 监听
+        let watcher = new Watcher(node,'value',this.$data,key)
+        this._binding[key]._directives.push(watcher)
+        // 监控文本框的变动
+        node.addEventListener('input',function(){data[key] = this.value})
+      }
+      // 解析 v-click 指令
+      if(node.hasAttribute('v-click')) {
+        // 获取绑定的方法名称
+        let methodName = node.getAttribute('v-click')
+        // 根据获取到的方法名称 从 $methods里面 取出对应的方法
+        let mothod = this.$methods[methodName].bind(this.$data)
+        // 绑定方法
+        node.addEventListener('click',mothod)
+      }
+    })
+  }
+
+  // // 监听类
+  function Watcher (node,attr,data,dataKey) {
+    this.node = node
+    this.attr = attr
+    this.data = data
+    this.dataKey = dataKey
+  }
+  Watcher.prototype.update = function () {
+    this.node[this.attr] = this.data[this.dataKey]
+  }
+
+  // 实例化一个Vue 测试用
+  window.onload = function () {
+    window.$app = new Vue({
+      el: '#app',
+      data:{
+          num:0
+      },
+      methods:{
+        add(){
+          this.num++
+        },
+        sub(){
+          this.num--
+        }
+      }
+    })
+  }
+</script>
+</html>

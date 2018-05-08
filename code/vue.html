@@ -1,0 +1,163 @@
+<html>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport"
+        content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Vue Test</title>
+</head>
+<body>
+
+<div id="app">
+  <input type="text" v-model="number"><br/>
+  <button type="button" v-click="addNumber">增加</button>
+  <button type="button" v-click="subNumber">减少</button>
+  <br/>
+  number:<span v-bind="number"></span><br/>
+
+  <br><br>
+
+  <input type="text" v-model="count"><br/>
+  <button type="button" v-click="addCount">增加</button>
+  <br/>
+  count:<span v-bind="count"></span><br/>
+
+</div>
+
+</body>
+<script>
+  function Vue (options) {
+    this._init(options);
+  }
+
+  // 初始化
+  Vue.prototype._init = function (options) {
+    this.$options = options
+    this.$el = document.querySelector(options.el);
+    this.$data = options.data
+    this.$methods = options.methods
+
+    this._binding = {}
+    this._observe(this.$data)  // 观测数据
+    this._complie(this.$el)    // 解析dom,获取指令
+  }
+  // 数据观测
+  Vue.prototype._observe = function (obj) {
+    var that = this
+    // 遍历data
+    Object.keys(obj).forEach(function (key) {
+      // 如果没有这个 key,就直接退出
+      if (!obj.hasOwnProperty(key)) return
+
+      // 初始化绑定的指令集
+      that._binding[key] = {_directives: []};
+
+      var value = obj[key]
+      // 如果是对象,则递归
+      if (typeof value === 'object') {
+        that._observe(value)
+      }
+      Object.defineProperty(that.$data, key, {
+        enumerable: true,
+        configurable: true,
+        get () {
+          return value
+        },
+        set (nv) {
+          if (value !== nv) {
+            value = nv
+            // 当值改变时，触发_binding._directives 中的绑定的Watcher类的更新
+            that._binding[key]._directives.forEach(function (item) {
+              // 这里的item,就是Wacther的实例
+              item.update();
+            })
+          }
+        }
+      })
+
+    })
+  }
+
+  // 指令解析器
+  Vue.prototype._complie = function (root) {
+    var that = this
+    // var nodes = root.children  // 获取根节点下的所有子节点(类数组) -----待改写
+    var nodes = Array.prototype.slice.call(root.children)
+
+    // 遍历所有节点
+    for (var i = 0; i < nodes.length; i++) {
+      var node = nodes[i]
+
+      // 如果是非空节点,就递归有子节点的节点
+      if (node.children.length > 0) {
+        this._complie(node)
+      }
+
+      // 转换 v-click 指令
+      if (node.hasAttribute('v-click')) {
+        node.onclick = (function () {
+          var attrVal = node.getAttribute('v-click')
+          // 返回methods里对应的方法,并且把作用域绑定到this.$data上
+          return that.$methods[attrVal].bind(that.$data)
+        })()
+      }
+
+      // 转换 v-model 指令
+      if (node.hasAttribute('v-model') && node.tagName == 'INPUT') {
+        // 如果是 文本框(input),就监听它的输入事件(input)
+        let nodeCopy = node  // 防闭包
+        let attrVal = node.getAttribute('v-model')
+        // 在指令集里 加入一个观察者
+        that._binding[attrVal]._directives.push(new Watcher(nodeCopy, that, attrVal, 'value'))
+        node.addEventListener('input', function () {
+          that.$data[attrVal] = nodeCopy.value
+        })
+      }
+
+      // 转换 v-bind 指令
+      if (node.hasAttribute('v-bind')) {
+        var attrVal = node.getAttribute('v-bind')
+        // 在指令集里 加入一个观察者
+        that._binding[attrVal]._directives.push(new Watcher(node, that, attrVal, 'innerHTML'))
+      }
+    }
+  }
+
+  // 参数:1绑定dom,2vue实例,3对应的值,4对应的html属性
+  function Watcher (el, vm, exp, attr) {
+    this.el = el       // 指令所在的dom
+    this.vm = vm       // 指令所属的vue
+    this.exp = exp     // 指令对应的值
+    this.attr = attr   // 绑定的html属性
+    this.update()
+  }
+  // 更新指令对应的值
+  Watcher.prototype.update = function () {
+    // 元素绑定的属性 = vm.data里面的exp字段
+    this.el[this.attr] = this.vm.$data[this.exp];
+  }
+</script>
+
+<script>
+  window.onload = function () {
+    let app = new Vue({
+      el: '#app',
+      data: {
+        number: 0,
+        count: 0
+      },
+      methods: {
+        addNumber () {
+          this.number++
+        },
+        subNumber () {
+          this.number--
+        },
+        addCount () {
+          this.count++
+        }
+      }
+    })
+  }
+</script>
+</html>

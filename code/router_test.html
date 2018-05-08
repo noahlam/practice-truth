@@ -1,0 +1,52 @@
+<html>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport"
+        content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Router Test</title>
+  <style>
+    .test {
+      width: 300px;
+      height: 300px;
+      border: 1px solid #ddd;
+      margin-top: 10px;
+    }
+  </style>
+</head>
+<body>
+<input type="button" onclick="historyPush('1.html','#f40009')" value="History跳转_1">
+<input type="button" onclick="historyPush('2.html', '#0832c6')" value="History跳转2">
+<input type="button" onclick="historyPush('3.html','#aa4477')" value="History跳转3">
+<br /><br />
+<input type="button" onclick="hashPush('1.html','#f40009')" value="Hash跳转_1">
+<input type="button" onclick="hashPush('2.html', '#0832c6')" value="Hash跳转2">
+<input type="button" onclick="hashPush('3.html','#aa4477')" value="Hash跳转3">
+<div class="test" id="test"></div>
+<script>
+  let test = document.getElementById('test')
+  function historyPush (url,color) {
+    test.style.backgroundColor = color ||''
+    test.innerHTML = url || ''
+    history.pushState({url,color}, '我是页面标题', url)
+    console.log('历史路由',url)
+  }
+  window.addEventListener('popstate',function (e) {
+    let state = e.state || {}
+    test.style.backgroundColor = state.color ||''
+    test.innerHTML = state.url || ''
+    console.log('历史路由',state.url)
+  })
+
+
+  function hashPush (url,color) {
+    test.style.backgroundColor = color ||''
+    test.innerHTML = url || ''
+    location.hash = "#" +url
+  }
+  window.addEventListener('hashchange',function(e){
+    console.log('哈希路由',location.hash.slice(1)||"/")
+  })
+</script>
+</body>
+</html>
