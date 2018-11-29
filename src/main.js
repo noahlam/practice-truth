@@ -7,6 +7,8 @@ Vue.config.productionTip = false
 import utils from './utils'
 
 Vue.prototype.post = utils.post
+import coupon from 'v-coupon'
+Vue.use(coupon)
 /* eslint-disable no-new */
 new Vue({
   el: '#app',
