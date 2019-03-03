@@ -1,14 +1,16 @@
 <template>
   <div id="app">
-    <v-coupon :config="couponConfig">
-      <div class="couponContent">我是卡券内容哈哈哈</div>
-    </v-coupon>
+    <!--<v-coupon :config="couponConfig">-->
+      <!--<div class="couponContent">我是卡券内容哈哈哈</div>-->
+    <!--</v-coupon>-->
+    <WhiteBoard/>
   </div>
 </template>
 
 <script>
+  import WhiteBoard from './white-board'
   export default {
-    components: {},
+    components: {WhiteBoard},
     name: 'App',
     data() {
       return {
