@@ -19,8 +19,10 @@
   },
   "homepage": "https://github.com/noahlam/practice-truth.git#readme",
   "dependencies": {
+    "@babel/parser": "^7.4.3",
     "axios": "*",
     "babel-cli": "^6.26.0",
+    "parcel-bundler": "^1.12.3",
     "vue": "*"
   },
   "devDependencies": {
