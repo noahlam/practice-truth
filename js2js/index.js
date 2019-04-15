@@ -1,14 +1,12 @@
 // import babelParser from '@babel/parser';
 const babylon = require("babylon");
 
-// debugger
-
-const ast = babylon.parse('var a = 10, b= 20; a++; b++; alert(a + b)');
-
-function raversAst(ast) {
- parseAstNode.bind(this)(ast.program);
+function traversAst() {
+    const textarea = document.querySelector('#textarea');
+    const ast = babylon.parse(textarea.innerHTML);
+    parseAstNode.bind(this)(ast.program);
 }
-
+window.traversAst = traversAst;
 function parseAstNode(node) {
   // 根节点
   if(node.type === 'Program') {
@@ -86,7 +84,6 @@ function parseAstNode(node) {
   if(node.type === 'UpdateExpression'){
     let {name, value} = parseAstNode(node.argument);
 
-    debugger
     switch (node.operator) {
       case '++': this[name] = value++;
       case '--': this[name] = value--;
@@ -95,6 +92,3 @@ function parseAstNode(node) {
 
 }
 
-console.log(ast.program);
-// console.log(ast.program.body[0].expression);
-raversAst(ast);

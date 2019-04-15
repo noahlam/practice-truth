@@ -5,9 +5,28 @@
         content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
   <meta http-equiv="X-UA-Compatible" content="ie=edge">
   <title>js2js</title>
+  <style>
+    #textarea{
+      width: 800px;
+      height: 600px;
+      font-size: 40px;
+    }
+
+  </style>
 </head>
 <body>
+<textarea type="text" id="textarea">
+  alert('hello world');
 
+  var a = 10, b=20;
+
+  a++;
+
+  b++;
+
+  alert(a+b);
+</textarea>
+<input type="button" value="执行" onclick="traversAst()"/>
 <script src="./index.js"></script>
 </body>
 </html>
