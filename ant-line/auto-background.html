@@ -1,0 +1,44 @@
+<html>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport"
+        content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>自动背景</title>
+  <style>
+    .auto-bg {
+      width: 100%;
+      height: calc(100vh - 30px);
+      box-sizing: border-box;
+      border-style: solid;
+      border-image-repeat: repeat;
+    }
+  </style>
+</head>
+<body>
+<input type="file" onchange="fileChange(this)">
+<div class="auto-bg"></div>
+
+<script>
+  function fileChange(e) {
+      const file = e.files[0];
+      const blob = new Blob([file]);
+      const url = URL.createObjectURL(blob);
+      const img = new Image();
+      img.onload = () => {
+          const width = img.width;
+          const height = img.height;
+          const target = document.querySelector('.auto-bg');
+
+          const wd2 = width % 2 === 0 ? width / 2 - 1 : (width - 1) / 2;
+          const hd2 = height % 2 === 0 ? height / 2 - 1 : (height - 1) / 2;
+
+          target.style.borderImageSource = `url("${url}")`;
+          target.style.borderImageSlice = `${hd2} ${wd2}`;
+          target.style.borderImageWidth = `${hd2}px ${wd2}px`;
+      };
+      img.src = url;
+  }
+</script>
+</body>
+</html>
