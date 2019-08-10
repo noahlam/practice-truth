@@ -4,26 +4,25 @@
   <meta name="viewport"
         content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
   <meta http-equiv="X-UA-Compatible" content="ie=edge">
-  <title>蚂蚁线 － GIF</title>
+  <title>自动背景</title>
   <style>
-    .ant-line {
-      width: 200px;
+    .auto-bg {
+      width:200px;
       height: 200px;
-      box-sizing: border-box;
-      border-style: solid;
-      border-width: 1px 1px;
       overflow: hidden;
       resize: both;
-      -webkit-border-image: url("images/ant-line.gif") 1 round;
-      background: #f5f5f5;
+
+      box-sizing: border-box;
+      border-style: solid;
+      border-image-repeat: repeat;
+      border-image-source: url("images/000.png");
+      border-image-slice: 27 27;
+      border-image-width: 27px 27px;
     }
   </style>
 </head>
 <body>
-
-<!--https://www.w3.org/TR/css-backgrounds-3/#border-images-->
-<div class="ant-line">
-</div>
+<div class="auto-bg"></div>
 
 </body>
 </html>
