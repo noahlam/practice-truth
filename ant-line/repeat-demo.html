@@ -1,0 +1,55 @@
+<html>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport"
+        content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>自动背景</title>
+  <style>
+    .repeat, .round, .repeat-demo{
+      width:200px;
+      height:200px;
+      margin: 100px;
+      overflow: hidden;
+      resize: both;
+      background: #f5f5f5;
+
+      border-style: solid;
+
+      border-image-source: url("./images/000.png");
+      border-image-slice: 27;
+      border-image-width: 27px;
+      border-image-outset: 27px;
+    }
+
+    .repeat {
+      border-image-repeat: repeat;
+    }
+    .round {
+      border-image-repeat: round;
+    }
+    .repeat-demo {
+      border-image-source: url("./images/repeat-demo.png");
+      border-image-slice: 40;
+      border-image-width: 40px;
+      border-image-outset: 40px;
+      border-image-repeat: space;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="repeat">
+    border-image-repeat: repeat;
+  </div>
+
+  <div class="round">
+    border-image-repeat: round;
+  </div>
+
+  <div class="repeat-demo">
+    border-image-repeat: space;
+  </div>
+</body>
+
+</html>
