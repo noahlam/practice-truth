@@ -1,0 +1,28 @@
+<svg width="100%" height="100%" version="1.1" xmlns="http://www.w3.org/2000/svg">
+    <style>
+        .ant-line {
+            animation: ant-crawl 0.76s linear infinite;
+        }
+
+        @keyframes ant-crawl {
+            from {
+                stroke-dashoffset: 0px;
+            }
+            to {
+                stroke-dashoffset: 10px;
+            }
+        }
+    </style>
+    <rect
+            class="ant-line"
+            x="0"
+            y="0"
+            width="100%"
+            height="100%"
+            fill="none"
+            stroke="red"
+            stroke-dasharray="5 5"
+            stroke-width="2"
+            stroke-dashoffset="5"
+    />
+</svg>
