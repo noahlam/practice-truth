@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <style>
+    video {
+        width: 300px;
+        margin: 10px;
+    }
+    </style>
+</head>
+<body>
+
+<div style="display: flex">
+    <video id="video" src="http://localhost/static/v444.mp4"></video>
+</div>
+
+<button onclick="record()">切割</button>
+
+<script>
+function download(data) {
+    const blob = new Blob([data], { type: 'video/webm' });
+    const url = URL.createObjectURL(blob);
+
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'recorded_video.webm';
+
+    a.click();
+
+    URL.revokeObjectURL(url);
+
+}
+
+function startRecording(stream, duration) {
+    return new Promise(resolve => {
+        const recorder = new MediaRecorder(stream);
+
+        recorder.ondataavailable = resolve;
+
+        recorder.start();
+
+        setTimeout(() => {
+            if(recorder.state === 'recording') {
+                recorder.stop();
+            }
+            video.pause();
+        }, duration * 1000);
+    });
+}
+
+async function record(duration = 2) {
+    await video.play();
+    const stream = video.captureStream();
+    const { data } = await startRecording(stream, duration);
+    download(data);
+}
+
+</script>
+</body>
+</html>

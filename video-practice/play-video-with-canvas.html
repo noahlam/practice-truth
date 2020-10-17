@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <style>
+    #canvas {
+        width: 320px;
+        height: 568px;
+        margin: 10px;
+        border: 1px solid #f00;
+        display: block;
+    }
+
+    .btn {
+        width: 320px;
+        height: 40px;
+        margin: 10px;
+    }
+    </style>
+</head>
+<body>
+
+<canvas id="canvas"></canvas>
+
+<button class="btn">播放</button>
+
+<script type="module">
+import {
+    filter1,
+    filter2,
+    filter3,
+} from './filters.js';
+
+const playButton = document.querySelector('.btn');
+const canvas = document.querySelector('#canvas');
+
+const ctx = canvas.getContext('2d');
+const FRAME_DURATION = 1 / 30;
+
+function loadVideo(video, url) {
+    return new Promise((resolve, reject) => {
+        video.onloadeddata = resolve;
+        video.onerror = reject;
+        video.src = url;
+    });
+}
+
+async function play() {
+    const res = await fetch('http://localhost/static/v5.mp4');
+    const buffer = await res.blob();
+    const url = URL.createObjectURL(buffer);
+    const video = document.createElement('video');
+
+    // 等待视频加载完成
+    await loadVideo(video, url);
+    canvas.width = video.videoWidth;
+    canvas.height = video.videoHeight;
+
+    let currentTime = 0;
+
+    const timer = setInterval(() => {
+
+        if(currentTime >= video.duration) {
+            clearInterval(timer);
+        }
+
+        function successCallback() {
+            ctx.drawImage(video, 0, 0, video.videoWidth, video.videoHeight);
+
+            // const imageData = ctx.getImageData(0, 0, video.videoWidth, video.videoHeight);
+            // filter3(imageData);
+            // ctx.putImageData(imageData, 0, 0);
+
+            video.removeEventListener('timeupdate', successCallback, true);
+        }
+
+        video.addEventListener('timeupdate', successCallback, true);
+
+        video.currentTime = currentTime;
+        currentTime += FRAME_DURATION;
+
+    }, FRAME_DURATION * 1000);
+}
+
+playButton.addEventListener('click', play, true);
+</script>
+</body>
+</html>

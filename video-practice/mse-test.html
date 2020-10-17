@@ -1,0 +1,62 @@
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Media Source Extensions</title>
+    <style>
+    video {
+        width: 320px;
+        height: 568px;
+        background: #eff4fb;
+    }
+    </style>
+</head>
+<body>
+<video id="video"></video>
+<button onclick="loadFragments()">加载</button>
+
+<script>
+
+const fragments = [
+    { url: './static/v444.mp4', duration: 14 },
+    { url: './static/v555.mp4', duration: 18 },
+    { url: './static/v3.mp4', duration: 60 },
+];
+
+let timestampOffset = 0;
+
+function loadFragments() {
+    const mediaSource = new MediaSource();
+
+    mediaSource.addEventListener('sourceopen', async () => {
+        const mimeCodec = 'video/mp4; codecs="avc1.64000A, mp4a.40.2"';
+        const sourceBuffer = mediaSource.addSourceBuffer(mimeCodec);
+
+        for (let i = 0; i < fragments.length; i++) {
+            await new Promise(async (resolve) => {
+
+                const fragment = fragments[i];
+
+                const res = await fetch(fragment.url);
+                const arrayBuffer = await res.arrayBuffer();
+
+                sourceBuffer.addEventListener('updateend', resolve);
+                sourceBuffer.timestampOffset = timestampOffset;
+                sourceBuffer.appendBuffer(arrayBuffer);
+
+                timestampOffset += fragment.duration;
+            });
+        }
+
+        mediaSource.endOfStream();
+    });
+
+
+    video.src = URL.createObjectURL(mediaSource);
+    video.addEventListener('canplay', video.play);
+    video.playbackRate = 10;
+}
+
+</script>
+
+</body>
+</html>

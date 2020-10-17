@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <style>
+    .wrapper{
+        display: flex;
+    }
+
+    .video-container{
+        width: 300px;
+        height: 533px;
+        position: relative;
+        margin: 10px;
+        background: #f00;
+    }
+
+
+    video {
+        width: 300px;
+        position: absolute;
+        top: 0;
+        left: 0;
+    }
+
+    .filter{
+        width: 300px;
+        background-color: #f00;
+        position: absolute;
+        left: 0;
+        top: 0;
+        z-index: 1;
+        pointer-events: none;
+        mix-blend-mode: difference;
+    }
+
+    .btn{
+        width: 100px;
+        height: 40px;
+        margin-top: 20px;
+    }
+    </style>
+</head>
+<body>
+
+<div class="wrapper">
+    <div class="video-container">
+        <video id="effectedVideo" src="http://localhost/static/background.mp4"></video>
+        <video id="filterVideo" class="filter" src="http://localhost/static/mask-video.mp4"></video>
+        <video id="filterVideo2" class="filter" src="http://localhost/static/mask-video.mp4"></video>
+    </div>
+
+    <div class="video-container">
+        <video id="sourceVideo" src="http://localhost/static/background.mp4" muted></video>
+    </div>
+
+    <div class="video-container">
+        <video id="sourceFilterVideo" src="http://localhost/static/mask-video.mp4" muted></video>
+    </div>
+</div>
+
+
+
+<button class="btn" onclick="play()">播放</button>
+
+<script>
+
+function play() {
+    effectedVideo.play();
+    filterVideo.play();
+    sourceVideo.play();
+    sourceFilterVideo.play();
+}
+
+</script>
+</body>
+</html>

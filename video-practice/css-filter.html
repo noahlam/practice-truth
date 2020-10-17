@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>webm test</title>
+    <style>
+     video{
+         width: 200px;
+         outline: none;
+     }
+
+     .filter-blur{
+         filter: blur(2px);
+     }
+    .filter-brightness{
+        filter: brightness(120%);
+    }
+
+     .filter-saturates{
+        filter: saturate(500%);
+    }
+     .filter-sepia{
+        filter: sepia(150%);
+    }
+     .filter-invert{
+        filter: invert(150%);
+    }
+    </style>
+</head>
+<body>
+<video class="filter-blur" src="http://localhost/static/v555.mp4" controls></video>
+<video class="filter-brightness" src="http://localhost/static/v555.mp4" controls></video>
+<video class="filter-saturates" src="http://localhost/static/v555.mp4" controls></video>
+<video class="filter-sepia" src="http://localhost/static/v555.mp4" controls></video>
+<video class="filter-invert" src="http://localhost/static/v555.mp4" controls></video>
+</body>
+</html>

@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <style>
+    video {
+        width: 320px;
+    }
+
+    input {
+        height: 30px;
+        margin: 10px 5px;
+        padding: 0 10px;
+        margin: 0;
+    }
+
+    .wrapper{
+        display: flex;
+        margin-bottom: 20px;
+    }
+    </style>
+</head>
+<body>
+
+<div class="wrapper">
+    <video id="video" src="http://localhost/static/v444.mp4" controls></video>
+    <img id="img">
+</div>
+
+<div class="wrapper">
+    <input type="button" onclick="capture()" value="截图"/>
+</div>
+
+
+
+<script>
+const canvas= document.createElement('canvas');
+const ctx = canvas.getContext('2d');
+
+canvas.crossOrigin = 'anonymous';
+canvas.width = 320;
+canvas.height = 568;
+
+function capture() {
+    ctx.drawImage(video, 0, 0, 320, 568);
+    canvas.toBlob(blob => {
+        img.src = URL.createObjectURL(blob);
+    });
+}
+</script>
+</body>
+</html>

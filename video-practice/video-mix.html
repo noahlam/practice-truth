@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <style>
+    .wrapper{
+        display: flex;
+    }
+
+    .video-container{
+        width: 300px;
+        height: 533px;
+        position: relative;
+        margin: 10px;
+    }
+
+
+    video {
+        width: 300px;
+        position: absolute;
+        top: 0;
+        left: 0;
+    }
+
+    .filter{
+        width: 300px;
+        height: 533px;
+        background-color: #f00;
+        position: absolute;
+        left: 0;
+        top: 0;
+        z-index: 1;
+        pointer-events: none;
+        mix-blend-mode: color;
+    }
+
+    .btn{
+        width: 100px;
+        height: 40px;
+        margin-top: 20px;
+    }
+    </style>
+</head>
+<body>
+
+<div class="wrapper">
+    <div class="video-container">
+        <video id="effectedVideo" src="http://localhost/static/v4.mp4"></video>
+        <div class="filter"></div>
+    </div>
+
+    <div class="video-container">
+        <video id="sourceVideo" src="http://localhost/static/v4.mp4" muted></video>
+    </div>
+</div>
+
+
+
+<button class="btn" onclick="play()">播放</button>
+
+<script>
+
+function play() {
+    effectedVideo.play();
+    sourceVideo.play();
+}
+
+</script>
+</body>
+</html>

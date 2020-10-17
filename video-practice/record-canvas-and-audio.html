@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <style>
+    #canvas {
+        width: 480px;
+        height: 720px;
+        border: 1px solid #f00;
+    }
+    </style>
+</head>
+<body>
+
+<canvas id="canvas" width="480" height="720"></canvas>
+<audio id="audio" src="/static/m1.mp3" cross-origin="anonymous"></audio>
+
+<button onclick="record()">录制</button>
+
+<script>
+const wait = t => new Promise(r => setTimeout(r, t));
+
+function startRecording(stream, duration) {
+    const recorder = new MediaRecorder(stream);
+    const data = [];
+
+    recorder.ondataavailable = event => data.push(event.data);
+    recorder.start();
+    console.log('开始录制...');
+
+    const stopped = new Promise((resolve, reject) => {
+        recorder.onstop = resolve;
+        recorder.onerror = event => reject(event.name);
+    });
+
+    const recorded = wait(duration).then(
+        () => recorder.state == 'recording' && recorder.stop()
+    );
+
+    return Promise.all([
+        stopped,
+        recorded
+    ])
+        .then(() => data);
+}
+
+function download(chunks) {
+    const blob = new Blob(chunks, { type: 'video/webm' });
+    const url = URL.createObjectURL(blob);
+
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'recorded_video.webm';
+
+    a.click();
+
+    URL.revokeObjectURL(url);
+
+}
+
+function generateRandom() {
+    return parseInt(Math.random() * 255);
+}
+
+function record() {
+    const ctx = canvas.getContext('2d');
+    audio.play();
+
+    const timer = setInterval(() => {
+        const r = generateRandom();
+        const g = generateRandom();
+        const b = generateRandom();
+        const a = generateRandom();
+        ctx.fillStyle = `rgba(${r}, ${g}, ${b}, ${a})`;
+        ctx.fillRect(0, 0, 480, 720);
+        ctx.fill();
+    }, 40);
+
+    const videoStream = canvas.captureStream();
+    const audioStream = audio.captureStream();
+    const audioTracks = audioStream.getAudioTracks()[0];
+    videoStream.addTrack(audioTracks);
+
+    startRecording(videoStream, 5000)
+        .then(download)
+        .then(() => {
+            clearInterval(timer);
+        });
+}
+</script>
+</body>
+</html>
